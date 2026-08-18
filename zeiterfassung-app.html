@@ -7,8 +7,11 @@
   <title>Zeiterfassung & Aufgaben</title>
   <style>
     :root {
-      --primary: #1d4e6b;
-      --primary-dark: #123646;
+      /* Farben aus dem WorkFlowBuddy-Logo entnommen */
+      --primary: #134969;
+      --primary-dark: #0d3450;
+      --accent: #f97e2b;
+      --accent-soft: #fdf1e7;
       --bg: #f4f6f7;
       --card: #ffffff;
       --border: #d7dde0;
@@ -20,6 +23,11 @@
 
     * {
       box-sizing: border-box;
+    }
+
+    input[type=radio],
+    input[type=checkbox] {
+      accent-color: var(--accent);
     }
 
     body {
@@ -109,8 +117,27 @@
     }
 
     .radio-row label.checked {
-      border-color: var(--primary);
-      background: #eaf2f6;
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .logo {
+      display: block;
+      width: 200px;
+      max-width: 62%;
+      height: auto;
+      margin: 0 auto 14px auto;
+    }
+
+    #card-header {
+      text-align: center;
+    }
+
+    .greeting {
+      font-weight: 600;
+      font-size: 1.05rem;
+      color: var(--primary);
+      margin: 0 0 6px 0;
     }
 
     button {
@@ -242,7 +269,8 @@
 <body>
 
   <div class="card" id="card-header">
-    <h1>Arbeitszeit & Aufgaben</h1>
+    <img class="logo" src="data:image/png;base64,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" alt="WorkFlowBuddy" width="480" height="291">
+    <p class="greeting hidden" id="greeting"></p>
     <p class="sub" id="objekt-label">Objekt wird erkannt&hellip;</p>
   </div>
 
@@ -273,10 +301,10 @@
 
   <!-- SCREEN 2: Erst-Scan -> fällige Aufgaben anzeigen -->
   <div class="card hidden" id="screen-start">
-    <h2>Arbeitszeitbeginn erfasst</h2>
+    <h2 id="start-heading">Arbeitszeitbeginn erfasst</h2>
     <p class="sub" id="start-time-info"></p>
     <div id="start-tasks"></div>
-    <div id="start-notasks" class="msg ok hidden">Für heute stehen an diesem Objekt keine fälligen Aufgaben an.</div>
+    <div id="start-notasks" class="msg ok hidden"></div>
     <button id="btn-start-done">Verstanden, schließen</button>
   </div>
 
@@ -327,7 +355,7 @@
     <div class="msg ok" id="success-text"></div>
   </div>
 
-  <div class="footer-note">officecoach.online &middot; Zeiterfassung Testphase</div>
+  <div class="footer-note">WorkFlowBuddy &middot; Zeiterfassung Testphase</div>
 
   <script>
     /* =========================================================================
@@ -369,6 +397,19 @@
 
     let currentTasks = []; // von Backend gelieferte fällige Aufgaben beim 2. Scan
     let selectedImages = []; // Array von JPEG-DataURL-Strings, wie n8n sie erwartet
+    let zeitErfasst = true;  // false, wenn heute keine Aufgabe faellig war
+    let vorname = "";        // fuer Begruessung und Abschiedstext
+
+    /* "Panzer, Paul" -> "Paul". Ohne Komma wird das erste Wort genommen,
+       damit auch ein spaeter geaendertes Namensformat nichts kaputt macht. */
+    function vornameVon(name) {
+      const s = String(name || "").trim();
+      if (!s) return "";
+      if (s.indexOf(",") >= 0) {
+        return (s.split(",")[1] || "").trim().split(/\s+/)[0] || "";
+      }
+      return s.split(/\s+/)[0];
+    }
 
     function init() {
       if (!objektNfcName) {
@@ -427,6 +468,10 @@
           return;
         }
 
+        vorname = vornameVon(mitarbeiter);
+        el("greeting").textContent = "Hallo " + vorname + ", schön, dass du da bist!";
+        show("greeting");
+
         if (res.mode === "start") {
           hide("screen-login");
           renderStartScreen(res);
@@ -447,13 +492,24 @@
     });
 
     function renderStartScreen(res) {
-      el("start-time-info").textContent =
-        (res.objektname ? res.objektname + " · " : "") + "Angemeldet um " + res.uhrzeit;
+      const tasks = res.aufgaben || [];
+      // Das Backend erfasst die Arbeitszeit nur, wenn heute wirklich Aufgaben
+      // faellig sind. Steht nichts an, wird keine Zeile in der Zeiterfassung
+      // angelegt - und dann darf hier auch kein Arbeitsbeginn behauptet werden.
+      zeitErfasst = (res.zeitErfasst !== false) && tasks.length > 0;
+
+      el("start-heading").textContent = zeitErfasst
+        ? "Arbeitszeitbeginn erfasst"
+        : "Heute nichts zu tun";
+      el("start-time-info").textContent = (res.objektname ? res.objektname + " · " : "")
+        + (zeitErfasst ? "Arbeitsbeginn " + res.uhrzeit : "Geprüft um " + res.uhrzeit);
 
       const container = el("start-tasks");
       container.innerHTML = "";
-      const tasks = res.aufgaben || [];
       if (tasks.length === 0) {
+        el("start-notasks").textContent = "An diesem Objekt sind heute keine Aufgaben fällig. "
+          + "Es wurde deshalb kein Arbeitsbeginn erfasst – du musst hier auch nicht erneut scannen. "
+          + "Falls doch etwas zu tun ist, bitte im Büro melden.";
         show("start-notasks");
       } else {
         hide("start-notasks");
@@ -472,7 +528,10 @@
     el("btn-start-done").addEventListener("click", () => {
       hide("screen-start");
       show("screen-success");
-      el("success-text").textContent = "Danke! Guten Start in den Arbeitstag.";
+      hide("greeting");
+      el("success-text").textContent = zeitErfasst
+        ? "Guten Start in den Arbeitstag, " + vorname + "!"
+        : "An diesem Objekt ist heute nichts zu tun, " + vorname + ". Es wurde keine Arbeitszeit erfasst.";
     });
 
     /* ---------- SCREEN 3: Zweit-Scan ---------- */
@@ -703,7 +762,9 @@
         }
         hide("screen-end");
         show("screen-success");
-        const info = "Danke! Feierabend erfasst um " + (res.uhrzeit || "") + ". "
+        hide("greeting");
+        const info = "Danke für deinen Einsatz heute, " + vorname + "! "
+          + "Feierabend erfasst um " + (res.uhrzeit || "") + ". "
           + (res.mailGesendet === false
               ? "Es wurde keine Mail an die Verwaltung gesendet."
               : "Die Verwaltung wurde informiert.");
