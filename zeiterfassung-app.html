@@ -496,6 +496,15 @@
       });
     }
 
+    /* Komfort, damit die Pruefung beim Absenden im Alltag nicht stoert:
+       "Ja" hakt alle angezeigten Aufgaben ab, "Nein" entfernt alle Haken.
+       Bei "Teilweise" bleibt die Auswahl unberuehrt. */
+    el("erledigt-group").addEventListener("change", (e) => {
+      const boxes = document.querySelectorAll(".task-check");
+      if (e.target.value === "ja") boxes.forEach(b => { b.checked = true; });
+      if (e.target.value === "nein") boxes.forEach(b => { b.checked = false; });
+    });
+
     el("bilder-group").addEventListener("change", (e) => {
       if (e.target.value === "ja") show("bilder-upload"); else { hide("bilder-upload"); selectedImages = []; renderThumbs(); }
     });
@@ -646,6 +655,34 @@
         text: t.text,
         erledigt: !!document.querySelector('.task-check[data-idx="' + idx + '"]:checked')
       }));
+      const abgehakt = aufgabenErledigt.filter(a => a.erledigt).length;
+
+      /* Widerspruch zwischen der Gesamtantwort und der Checkliste abfangen.
+         Ohne diese Pruefung kann der Mitarbeiter "Ja" waehlen und nichts
+         abhaken - die Mail an den Verwalter meldet dann, es sei nichts
+         erledigt worden, und "zuletzt ausgefuehrt am" bleibt unveraendert.
+         Nur pruefen, wenn ueberhaupt Aufgaben angezeigt wurden. */
+      if (currentTasks.length > 0) {
+        if (erledigt.value === "ja" && abgehakt === 0) {
+          return showError("end-error", "Du hast angegeben, dass die Arbeiten erledigt wurden, "
+            + "aber keine einzige Aufgabe abgehakt. Bitte hake die erledigten Aufgaben ab – "
+            + "oder wechsle auf „Nein“ beziehungsweise „Teilweise“.");
+        }
+        if (erledigt.value === "ja" && abgehakt < currentTasks.length) {
+          return showError("end-error", "Du hast „Ja“ gewählt, aber nur " + abgehakt + " von "
+            + currentTasks.length + " Aufgaben abgehakt. Bitte alle abhaken – "
+            + "oder auf „Teilweise“ wechseln.");
+        }
+        if (erledigt.value === "teilweise" && abgehakt === 0) {
+          return showError("end-error", "Bei „Teilweise“ muss mindestens eine Aufgabe abgehakt sein. "
+            + "Bitte abhaken – oder auf „Nein“ wechseln.");
+        }
+        if (erledigt.value === "nein" && abgehakt > 0) {
+          return showError("end-error", "Du hast „Nein“ gewählt, aber " + abgehakt
+            + " Aufgabe(n) abgehakt. Bitte die Haken entfernen – "
+            + "oder auf „Ja“ beziehungsweise „Teilweise“ wechseln.");
+        }
+      }
 
       const payload = {
         objektNfcName,
