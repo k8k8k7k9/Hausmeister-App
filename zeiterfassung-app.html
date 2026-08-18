@@ -1,487 +1,716 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Zeiterfassung & Aufgaben</title>
-<style>
-  :root{
-    --primary:#1d4e6b;
-    --primary-dark:#123646;
-    --bg:#f4f6f7;
-    --card:#ffffff;
-    --border:#d7dde0;
-    --text:#1c2b33;
-    --muted:#5c6b73;
-    --danger:#b3261e;
-    --ok:#1e6b3c;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    padding:16px;
-    padding-bottom:60px;
-  }
-  .card{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:12px;
-    padding:20px;
-    max-width:480px;
-    margin:0 auto 16px auto;
-  }
-  h1{font-size:1.15rem;margin:0 0 4px 0;}
-  h2{font-size:1rem;margin:0 0 12px 0;color:var(--primary-dark);}
-  p.sub{color:var(--muted);margin:0 0 16px 0;font-size:0.9rem;}
-  label{display:block;font-weight:600;font-size:0.9rem;margin:14px 0 6px 0;}
-  select, input[type=text], input[type=password], input[type=tel], textarea{
-    width:100%;
-    padding:12px;
-    font-size:1rem;
-    border:1px solid var(--border);
-    border-radius:8px;
-    background:#fff;
-    color:var(--text);
-  }
-  textarea{min-height:80px;resize:vertical;}
-  .radio-row{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;}
-  .radio-row label{
-    display:flex;align-items:center;gap:6px;
-    border:1px solid var(--border);
-    border-radius:8px;
-    padding:10px 14px;
-    font-weight:500;
-    margin:0;
-    flex:1;
-    justify-content:center;
-    min-width:90px;
-  }
-  .radio-row input{margin:0;}
-  .radio-row label.checked{border-color:var(--primary);background:#eaf2f6;}
-  button{
-    width:100%;
-    padding:14px;
-    font-size:1.05rem;
-    font-weight:600;
-    border:none;
-    border-radius:8px;
-    background:var(--primary);
-    color:#fff;
-    margin-top:20px;
-    cursor:pointer;
-  }
-  button:disabled{background:#9fb2ba;}
-  button.secondary{background:#fff;color:var(--primary);border:1px solid var(--primary);margin-top:10px;}
-  .task{
-    border:1px solid var(--border);
-    border-radius:8px;
-    padding:12px;
-    margin-bottom:10px;
-  }
-  .task .name{font-weight:600;margin-bottom:4px;}
-  .task .desc{font-size:0.88rem;color:var(--muted);}
-  .task .meta{font-size:0.8rem;color:var(--muted);margin-top:4px;}
-  .task label{display:flex;align-items:center;gap:8px;font-weight:500;margin-top:8px;}
-  .msg{padding:12px;border-radius:8px;margin-top:14px;font-size:0.9rem;}
-  .msg.error{background:#fbeaea;color:var(--danger);border:1px solid #e3a8a4;}
-  .msg.ok{background:#e9f5ee;color:var(--ok);border:1px solid #a8d9bc;}
-  .hidden{display:none !important;}
-  .spinner{
-    display:inline-block;width:16px;height:16px;border:2px solid #fff;
-    border-top-color:transparent;border-radius:50%;
-    animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:8px;
-  }
-  @keyframes spin{to{transform:rotate(360deg);}}
-  .file-list{margin-top:10px;font-size:0.85rem;color:var(--muted);}
-  .thumbs{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
-  .thumbs img{width:64px;height:64px;object-fit:cover;border-radius:6px;border:1px solid var(--border);}
-  .footer-note{text-align:center;color:var(--muted);font-size:0.75rem;margin-top:20px;}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>Zeiterfassung & Aufgaben</title>
+  <style>
+    :root {
+      --primary: #1d4e6b;
+      --primary-dark: #123646;
+      --bg: #f4f6f7;
+      --card: #ffffff;
+      --border: #d7dde0;
+      --text: #1c2b33;
+      --muted: #5c6b73;
+      --danger: #b3261e;
+      --ok: #1e6b3c;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 16px;
+      padding-bottom: 60px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 480px;
+      margin: 0 auto 16px auto;
+    }
+
+    h1 {
+      font-size: 1.15rem;
+      margin: 0 0 4px 0;
+    }
+
+    h2 {
+      font-size: 1rem;
+      margin: 0 0 12px 0;
+      color: var(--primary-dark);
+    }
+
+    p.sub {
+      color: var(--muted);
+      margin: 0 0 16px 0;
+      font-size: 0.9rem;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin: 14px 0 6px 0;
+    }
+
+    select,
+    input[type=text],
+    input[type=password],
+    input[type=tel],
+    textarea {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .radio-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+
+    .radio-row label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-weight: 500;
+      margin: 0;
+      flex: 1;
+      justify-content: center;
+      min-width: 90px;
+    }
+
+    .radio-row input {
+      margin: 0;
+    }
+
+    .radio-row label.checked {
+      border-color: var(--primary);
+      background: #eaf2f6;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      background: var(--primary);
+      color: #fff;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background: #9fb2ba;
+    }
+
+    button.secondary {
+      background: #fff;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      margin-top: 10px;
+    }
+
+    .task {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    .task .name {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .task .desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    .task .meta {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .task label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      margin-top: 8px;
+    }
+
+    .msg {
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 14px;
+      font-size: 0.9rem;
+    }
+
+    .msg.error {
+      background: #fbeaea;
+      color: var(--danger);
+      border: 1px solid #e3a8a4;
+    }
+
+    .msg.ok {
+      background: #e9f5ee;
+      color: var(--ok);
+      border: 1px solid #a8d9bc;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #fff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .file-list {
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .thumbs {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .thumbs img {
+      width: 64px;
+      height: 64px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.75rem;
+      margin-top: 20px;
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="card" id="card-header">
-  <h1>Arbeitszeit & Aufgaben</h1>
-  <p class="sub" id="objekt-label">Objekt wird erkannt&hellip;</p>
-</div>
-
-<!-- SCREEN 0: Fehler, wenn kein Objekt erkannt -->
-<div class="card hidden" id="screen-noobjekt">
-  <div class="msg error">
-    Kein Objekt erkannt. Bitte den NFC-Tag erneut scannen. Falls das Problem bestehen bleibt, bitte an die Verwaltung melden.
-  </div>
-</div>
-
-<!-- SCREEN 1: Anmeldung (Name + Personalnummer) -->
-<div class="card hidden" id="screen-login">
-  <h2>Anmeldung</h2>
-  <label for="mitarbeiter">Name</label>
-  <select id="mitarbeiter">
-    <option value="" disabled selected>Bitte auswählen&hellip;</option>
-  </select>
-
-  <label for="pin">Personalnummer (PIN)</label>
-  <input type="password" id="pin" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="•••• (nicht weitergeben)">
-
-  <div class="msg error hidden" id="login-error"></div>
-
-  <button id="btn-login">Anmelden</button>
-</div>
-
-<!-- SCREEN 2: Erst-Scan -> fällige Aufgaben anzeigen -->
-<div class="card hidden" id="screen-start">
-  <h2>Arbeitszeitbeginn erfasst</h2>
-  <p class="sub" id="start-time-info"></p>
-  <div id="start-tasks"></div>
-  <div id="start-notasks" class="msg ok hidden">Für heute stehen an diesem Objekt keine fälligen Aufgaben an.</div>
-  <button id="btn-start-done">Verstanden, schließen</button>
-</div>
-
-<!-- SCREEN 3: Zweit-Scan -> Rückmeldung -->
-<div class="card hidden" id="screen-end">
-  <h2>Feierabend – Rückmeldung</h2>
-
-  <label>a) Wurden die Arbeiten erledigt?</label>
-  <div class="radio-row" id="erledigt-group">
-    <label><input type="radio" name="erledigt" value="ja"> Ja</label>
-    <label><input type="radio" name="erledigt" value="nein"> Nein</label>
-    <label><input type="radio" name="erledigt" value="teilweise"> Teilweise</label>
+  <div class="card" id="card-header">
+    <h1>Arbeitszeit & Aufgaben</h1>
+    <p class="sub" id="objekt-label">Objekt wird erkannt&hellip;</p>
   </div>
 
-  <div id="task-checklist"></div>
-
-  <label>Möchtest du Bilder hochladen? (max. 3)</label>
-  <div class="radio-row" id="bilder-group">
-    <label><input type="radio" name="bilderJaNein" value="ja"> Ja</label>
-    <label><input type="radio" name="bilderJaNein" value="nein"> Nein</label>
-  </div>
-  <div id="bilder-upload" class="hidden">
-    <input type="file" id="bilder-input" accept="image/*" capture="environment" multiple>
-    <div class="file-list" id="bilder-count"></div>
-    <div class="thumbs" id="bilder-thumbs"></div>
+  <!-- SCREEN 0: Fehler, wenn kein Objekt erkannt -->
+  <div class="card hidden" id="screen-noobjekt">
+    <div class="msg error">
+      Kein Objekt erkannt. Bitte den NFC-Tag erneut scannen. Falls das Problem bestehen bleibt, bitte an die Verwaltung
+      melden.
+    </div>
   </div>
 
-  <label>Möchtest du eine Notiz einfügen?</label>
-  <div class="radio-row" id="notiz-group">
-    <label><input type="radio" name="notizJaNein" value="ja"> Ja</label>
-    <label><input type="radio" name="notizJaNein" value="nein"> Nein</label>
+  <!-- SCREEN 1: Anmeldung (Name + Personalnummer) -->
+  <div class="card hidden" id="screen-login">
+    <h2>Anmeldung</h2>
+    <label for="mitarbeiter">Name</label>
+    <select id="mitarbeiter">
+      <option value="" disabled selected>Bitte auswählen&hellip;</option>
+    </select>
+
+    <label for="pin">Personalnummer (PIN)</label>
+    <input type="password" id="pin" inputmode="numeric" autocomplete="off" maxlength="8"
+      placeholder="•••• (nicht weitergeben)">
+
+    <div class="msg error hidden" id="login-error"></div>
+
+    <button id="btn-login">Anmelden</button>
   </div>
-  <div id="notiz-feld" class="hidden">
-    <textarea id="notiz-text" placeholder="Notiz eingeben&hellip;"></textarea>
+
+  <!-- SCREEN 2: Erst-Scan -> fällige Aufgaben anzeigen -->
+  <div class="card hidden" id="screen-start">
+    <h2>Arbeitszeitbeginn erfasst</h2>
+    <p class="sub" id="start-time-info"></p>
+    <div id="start-tasks"></div>
+    <div id="start-notasks" class="msg ok hidden">Für heute stehen an diesem Objekt keine fälligen Aufgaben an.</div>
+    <button id="btn-start-done">Verstanden, schließen</button>
   </div>
 
-  <div class="msg error hidden" id="end-error"></div>
+  <!-- SCREEN 3: Zweit-Scan -> Rückmeldung -->
+  <div class="card hidden" id="screen-end">
+    <h2>Feierabend – Rückmeldung</h2>
 
-  <button id="btn-end-submit">Absenden</button>
-</div>
+    <label>a) Wurden die Arbeiten erledigt?</label>
+    <div class="radio-row" id="erledigt-group">
+      <label><input type="radio" name="erledigt" value="ja"> Ja</label>
+      <label><input type="radio" name="erledigt" value="nein"> Nein</label>
+      <label><input type="radio" name="erledigt" value="teilweise"> Teilweise</label>
+    </div>
 
-<!-- SCREEN 4: Erfolg -->
-<div class="card hidden" id="screen-success">
-  <div class="msg ok" id="success-text"></div>
-</div>
+    <div id="task-checklist"></div>
 
-<div class="footer-note">officecoach.online &middot; Zeiterfassung Testphase</div>
+    <label>Möchtest du Bilder hochladen? (max. 3)</label>
+    <div class="radio-row" id="bilder-group">
+      <label><input type="radio" name="bilderJaNein" value="ja"> Ja</label>
+      <label><input type="radio" name="bilderJaNein" value="nein"> Nein</label>
+    </div>
+    <div id="bilder-upload" class="hidden">
+      <!-- accept bewusst nur "image/*": zusaetzliche MIME-Typen wie image/heic
+           bringen iOS Safari dazu, im Auswahlmenue "Fotomediathek" und
+           "Foto aufnehmen" auszublenden und nur noch "Durchsuchen" anzubieten. -->
+      <input type="file" id="bilder-input" accept="image/*" multiple>
+      <div class="file-list" id="bilder-count"></div>
+      <div class="msg error hidden" id="bilder-error"></div>
+      <div class="thumbs" id="bilder-thumbs"></div>
+    </div>
 
-<script>
-/* =========================================================================
-   KONFIGURATION – vor dem Einsatz anpassen
-   ========================================================================= */
-// Basis-URL des n8n-Webhooks (Produktions-URL des "Scan"-Workflows).
-// Beispiel: "https://DEINE-N8N-INSTANZ.app.n8n.cloud/webhook/zeiterfassung"
-const WEBHOOK_BASE_URL = "https://ki-automatisierung.startplatz-ai-hub.de/webhook/zeiterfassung";
+    <label>Möchtest du eine Notiz einfügen?</label>
+    <div class="radio-row" id="notiz-group">
+      <label><input type="radio" name="notizJaNein" value="ja"> Ja</label>
+      <label><input type="radio" name="notizJaNein" value="nein"> Nein</label>
+    </div>
+    <div id="notiz-feld" class="hidden">
+      <textarea id="notiz-text" placeholder="Notiz eingeben&hellip;"></textarea>
+    </div>
 
-// Mitarbeiterliste für das Dropdown. Muss manuell mit dem Tab
-// "Mitarbeiter Stammdaten" synchron gehalten werden (Testphase).
-const MITARBEITER = [
-  "Panzer, Paul",
-  "Müller, Elli",
-  "Müller, Peter",
-  "Hermann, Siggi",
-  "Schneider, Fitzi",
-  "Held, Florian",
-  "Gustavson, Emil"
-];
+    <div class="msg error hidden" id="end-error"></div>
 
-// Maximale Kantenlänge (px) und JPEG-Qualität für hochgeladene Fotos,
-// damit die Übertragung an n8n klein genug bleibt.
-const IMAGE_MAX_DIMENSION = 1280;
-const IMAGE_JPEG_QUALITY = 0.7;
-const MAX_IMAGES = 3;
+    <button id="btn-end-submit">Absenden</button>
+  </div>
 
-/* ========================================================================= */
+  <!-- SCREEN 4: Erfolg -->
+  <div class="card hidden" id="screen-success">
+    <div class="msg ok" id="success-text"></div>
+  </div>
 
-const qs = new URLSearchParams(window.location.search);
-const objektNfcName = qs.get("objekt"); // z.B. "Objekt 10152"
+  <div class="footer-note">officecoach.online &middot; Zeiterfassung Testphase</div>
 
-const el = (id) => document.getElementById(id);
-const show = (id) => el(id).classList.remove("hidden");
-const hide = (id) => el(id).classList.add("hidden");
+  <script>
+    /* =========================================================================
+       KONFIGURATION – vor dem Einsatz anpassen
+       ========================================================================= */
+    // Basis-URL des n8n-Webhooks (Produktions-URL des "Scan"-Workflows).
+    // Beispiel: "https://DEINE-N8N-INSTANZ.app.n8n.cloud/webhook/zeiterfassung"
+    // Produktions-URL. Die beiden Endpunkte heissen "/scan" und "/scan-finish"
+    // und werden unten angehaengt. Nicht "/webhook-test/" verwenden, das
+    // funktioniert nur, solange im n8n-Editor "Execute workflow" laeuft.
+    const WEBHOOK_BASE_URL = "https://ki-automatisierung.startplatz-ai-hub.de/webhook/zeiterfassung";
 
-let currentTasks = []; // von Backend gelieferte fällige Aufgaben beim 2. Scan
-let selectedImages = []; // Array von {dataUrl, blob}
+    // Mitarbeiterliste für das Dropdown. Muss manuell mit dem Tab
+    // "Mitarbeiter Stammdaten" synchron gehalten werden (Testphase).
+    const MITARBEITER = [
+      "Panzer, Paul",
+      "Müller, Elli",
+      "Müller, Peter",
+      "Hermann, Siggi",
+      "Schneider, Fitzi",
+      "Held, Florian",
+      "Gustavson, Emil"
+    ];
 
-function init() {
-  if (!objektNfcName) {
-    hide("card-header");
-    show("screen-noobjekt");
-    return;
-  }
-  el("objekt-label").textContent = "Objekt-Kennung: " + objektNfcName;
+    // Maximale Kantenlänge (px) und JPEG-Qualität für hochgeladene Fotos,
+    // damit die Übertragung an n8n klein genug bleibt.
+    const IMAGE_MAX_DIMENSION = 1280;
+    const IMAGE_JPEG_QUALITY = 0.7;
+    const MAX_IMAGES = 3;
 
-  const sel = el("mitarbeiter");
-  MITARBEITER.forEach(name => {
-    const opt = document.createElement("option");
-    opt.value = name;
-    opt.textContent = name;
-    sel.appendChild(opt);
-  });
+    /* ========================================================================= */
 
-  show("screen-login");
-  wireRadioHighlight("erledigt-group");
-  wireRadioHighlight("bilder-group");
-  wireRadioHighlight("notiz-group");
-}
+    const qs = new URLSearchParams(window.location.search);
+    const objektNfcName = qs.get("objekt"); // z.B. "Objekt 10152"
 
-function wireRadioHighlight(groupId) {
-  const group = el(groupId);
-  group.querySelectorAll("input[type=radio]").forEach(r => {
-    r.addEventListener("change", () => {
-      group.querySelectorAll("label").forEach(l => l.classList.remove("checked"));
-      r.closest("label").classList.add("checked");
-    });
-  });
-}
+    const el = (id) => document.getElementById(id);
+    const show = (id) => el(id).classList.remove("hidden");
+    const hide = (id) => el(id).classList.add("hidden");
 
-/* ---------- SCREEN 1: Anmeldung ---------- */
+    let currentTasks = []; // von Backend gelieferte fällige Aufgaben beim 2. Scan
+    let selectedImages = []; // Array von JPEG-DataURL-Strings, wie n8n sie erwartet
 
-el("btn-login").addEventListener("click", async () => {
-  const mitarbeiter = el("mitarbeiter").value;
-  const pin = el("pin").value.trim();
-  hide("login-error");
-
-  if (!mitarbeiter) {
-    return showError("login-error", "Bitte einen Namen auswählen.");
-  }
-  if (!pin) {
-    return showError("login-error", "Bitte die Personalnummer eingeben.");
-  }
-
-  setLoading("btn-login", true, "Anmelden");
-  try {
-    const res = await postJSON(WEBHOOK_BASE_URL + "/scan", {
-      objektNfcName, mitarbeiter, pin
-    });
-
-    if (res.mode === "error") {
-      showError("login-error", res.message || "Anmeldung fehlgeschlagen.");
-      return;
-    }
-
-    if (res.mode === "start") {
-      hide("screen-login");
-      renderStartScreen(res);
-      show("screen-start");
-    } else if (res.mode === "end") {
-      hide("screen-login");
-      currentTasks = res.aufgaben || [];
-      renderTaskChecklist(currentTasks);
-      show("screen-end");
-    } else {
-      showError("login-error", "Unerwartete Antwort vom Server.");
-    }
-  } catch (e) {
-    showError("login-error", "Verbindung fehlgeschlagen. Bitte erneut versuchen. (" + e.message + ")");
-  } finally {
-    setLoading("btn-login", false, "Anmelden");
-  }
-});
-
-function renderStartScreen(res) {
-  el("start-time-info").textContent =
-    (res.objektname ? res.objektname + " · " : "") + "Angemeldet um " + res.uhrzeit;
-
-  const container = el("start-tasks");
-  container.innerHTML = "";
-  const tasks = res.aufgaben || [];
-  if (tasks.length === 0) {
-    show("start-notasks");
-  } else {
-    hide("start-notasks");
-    tasks.forEach(t => {
-      const div = document.createElement("div");
-      div.className = "task";
-      div.innerHTML =
-        '<div class="name">' + escapeHtml(t.text.split(":")[0]) + '</div>' +
-        '<div class="desc">' + escapeHtml(t.text) + '</div>' +
-        '<div class="meta">Rhythmus: ' + escapeHtml(t.rhythmus || "-") + '</div>';
-      container.appendChild(div);
-    });
-  }
-}
-
-el("btn-start-done").addEventListener("click", () => {
-  hide("screen-start");
-  show("screen-success");
-  el("success-text").textContent = "Danke! Guten Start in den Arbeitstag.";
-});
-
-/* ---------- SCREEN 3: Zweit-Scan ---------- */
-
-function renderTaskChecklist(tasks) {
-  const container = el("task-checklist");
-  container.innerHTML = "";
-  if (!tasks || tasks.length === 0) return;
-
-  const heading = document.createElement("label");
-  heading.textContent = "Welche Aufgaben wurden konkret erledigt?";
-  container.appendChild(heading);
-
-  tasks.forEach((t, idx) => {
-    const div = document.createElement("div");
-    div.className = "task";
-    div.innerHTML =
-      '<div class="desc">' + escapeHtml(t.text) + '</div>' +
-      '<label><input type="checkbox" class="task-check" data-idx="' + idx + '"> erledigt</label>';
-    container.appendChild(div);
-  });
-}
-
-el("bilder-group").addEventListener("change", (e) => {
-  if (e.target.value === "ja") show("bilder-upload"); else { hide("bilder-upload"); selectedImages = []; renderThumbs(); }
-});
-
-el("notiz-group").addEventListener("change", (e) => {
-  if (e.target.value === "ja") show("notiz-feld"); else hide("notiz-feld");
-});
-
-el("bilder-input").addEventListener("change", async (e) => {
-  const files = Array.from(e.target.files).slice(0, MAX_IMAGES);
-  if (e.target.files.length > MAX_IMAGES) {
-    el("bilder-count").textContent = "Nur die ersten " + MAX_IMAGES + " Bilder werden verwendet.";
-  }
-  selectedImages = [];
-  for (const f of files) {
-    const dataUrl = await resizeImageToDataUrl(f, IMAGE_MAX_DIMENSION, IMAGE_JPEG_QUALITY);
-    selectedImages.push(dataUrl);
-  }
-  renderThumbs();
-});
-
-function renderThumbs() {
-  const box = el("bilder-thumbs");
-  box.innerHTML = "";
-  selectedImages.forEach(src => {
-    const img = document.createElement("img");
-    img.src = src;
-    box.appendChild(img);
-  });
-  el("bilder-count").textContent = selectedImages.length + " Bild(er) ausgewählt.";
-}
-
-function resizeImageToDataUrl(file, maxDim, quality) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    const reader = new FileReader();
-    reader.onload = () => { img.src = reader.result; };
-    reader.onerror = reject;
-    img.onload = () => {
-      let { width, height } = img;
-      if (width > maxDim || height > maxDim) {
-        if (width > height) { height = Math.round(height * maxDim / width); width = maxDim; }
-        else { width = Math.round(width * maxDim / height); height = maxDim; }
+    function init() {
+      if (!objektNfcName) {
+        hide("card-header");
+        show("screen-noobjekt");
+        return;
       }
-      const canvas = document.createElement("canvas");
-      canvas.width = width; canvas.height = height;
-      canvas.getContext("2d").drawImage(img, 0, 0, width, height);
-      resolve(canvas.toDataURL("image/jpeg", quality));
-    };
-    img.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
+      el("objekt-label").textContent = "Objekt-Kennung: " + objektNfcName;
 
-el("btn-end-submit").addEventListener("click", async () => {
-  hide("end-error");
-  const erledigt = document.querySelector('input[name=erledigt]:checked');
-  const bilderJaNein = document.querySelector('input[name=bilderJaNein]:checked');
-  const notizJaNein = document.querySelector('input[name=notizJaNein]:checked');
+      const sel = el("mitarbeiter");
+      MITARBEITER.forEach(name => {
+        const opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name;
+        sel.appendChild(opt);
+      });
 
-  if (!erledigt) return showError("end-error", "Bitte a) beantworten: Wurden die Arbeiten erledigt?");
-  if (!bilderJaNein) return showError("end-error", "Bitte angeben, ob Bilder hochgeladen werden sollen.");
-  if (notizJaNein && notizJaNein.value === "ja" && !el("notiz-text").value.trim()) {
-    return showError("end-error", "Bitte Notiztext eingeben oder auf 'Nein' wechseln.");
-  }
-  if (bilderJaNein.value === "ja" && selectedImages.length === 0) {
-    return showError("end-error", "Bitte mindestens ein Bild auswählen oder auf 'Nein' wechseln.");
-  }
-
-  const aufgabenErledigt = currentTasks.map((t, idx) => ({
-    text: t.text,
-    erledigt: !!document.querySelector('.task-check[data-idx="' + idx + '"]:checked')
-  }));
-
-  const payload = {
-    objektNfcName,
-    mitarbeiter: el("mitarbeiter").value,
-    pin: el("pin").value.trim(),
-    erledigtStatus: erledigt.value,          // "ja" | "nein" | "teilweise"
-    aufgabenErledigt,
-    notiz: (notizJaNein.value === "ja") ? el("notiz-text").value.trim() : "",
-    bilder: (bilderJaNein.value === "ja") ? selectedImages : []
-  };
-
-  setLoading("btn-end-submit", true, "Absenden");
-  try {
-    const res = await postJSON(WEBHOOK_BASE_URL + "/scan-finish", payload);
-    if (res.mode === "error") {
-      showError("end-error", res.message || "Absenden fehlgeschlagen.");
-      return;
+      show("screen-login");
+      wireRadioHighlight("erledigt-group");
+      wireRadioHighlight("bilder-group");
+      wireRadioHighlight("notiz-group");
     }
-    hide("screen-end");
-    show("screen-success");
-    el("success-text").textContent = "Danke! Feierabend erfasst um " + (res.uhrzeit || "") + ". Die Verwaltung wurde informiert.";
-  } catch (e) {
-    showError("end-error", "Verbindung fehlgeschlagen. Bitte erneut versuchen. (" + e.message + ")");
-  } finally {
-    setLoading("btn-end-submit", false, "Absenden");
-  }
-});
 
-/* ---------- Hilfsfunktionen ---------- */
+    function wireRadioHighlight(groupId) {
+      const group = el(groupId);
+      group.querySelectorAll("input[type=radio]").forEach(r => {
+        r.addEventListener("change", () => {
+          group.querySelectorAll("label").forEach(l => l.classList.remove("checked"));
+          r.closest("label").classList.add("checked");
+        });
+      });
+    }
 
-async function postJSON(url, body) {
-  const resp = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body)
-  });
-  if (!resp.ok) {
-    throw new Error("HTTP " + resp.status);
-  }
-  return resp.json();
-}
+    /* ---------- SCREEN 1: Anmeldung ---------- */
 
-function showError(id, text) {
-  el(id).textContent = text;
-  show(id);
-}
+    el("btn-login").addEventListener("click", async () => {
+      const mitarbeiter = el("mitarbeiter").value;
+      const pin = el("pin").value.trim();
+      hide("login-error");
 
-function setLoading(btnId, loading, label) {
-  const btn = el(btnId);
-  btn.disabled = loading;
-  btn.innerHTML = loading ? '<span class="spinner"></span>Bitte warten&hellip;' : label;
-}
+      if (!mitarbeiter) {
+        return showError("login-error", "Bitte einen Namen auswählen.");
+      }
+      if (!pin) {
+        return showError("login-error", "Bitte die Personalnummer eingeben.");
+      }
 
-function escapeHtml(s) {
-  return String(s || "").replace(/[&<>"']/g, c => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-  }[c]));
-}
+      setLoading("btn-login", true, "Anmelden");
+      try {
+        const res = await postJSON(WEBHOOK_BASE_URL + "/scan", {
+          objektNfcName, mitarbeiter, pin
+        });
 
-init();
-</script>
+        if (res.mode === "error") {
+          showError("login-error", res.message || "Anmeldung fehlgeschlagen.");
+          return;
+        }
+
+        if (res.mode === "start") {
+          hide("screen-login");
+          renderStartScreen(res);
+          show("screen-start");
+        } else if (res.mode === "end") {
+          hide("screen-login");
+          currentTasks = res.aufgaben || [];
+          renderTaskChecklist(currentTasks);
+          show("screen-end");
+        } else {
+          showError("login-error", "Unerwartete Antwort vom Server.");
+        }
+      } catch (e) {
+        showError("login-error", "Verbindung fehlgeschlagen. Bitte erneut versuchen. (" + e.message + ")");
+      } finally {
+        setLoading("btn-login", false, "Anmelden");
+      }
+    });
+
+    function renderStartScreen(res) {
+      el("start-time-info").textContent =
+        (res.objektname ? res.objektname + " · " : "") + "Angemeldet um " + res.uhrzeit;
+
+      const container = el("start-tasks");
+      container.innerHTML = "";
+      const tasks = res.aufgaben || [];
+      if (tasks.length === 0) {
+        show("start-notasks");
+      } else {
+        hide("start-notasks");
+        tasks.forEach(t => {
+          const div = document.createElement("div");
+          div.className = "task";
+          div.innerHTML =
+            '<div class="name">' + escapeHtml(t.text.split(":")[0]) + '</div>' +
+            '<div class="desc">' + escapeHtml(t.text) + '</div>' +
+            '<div class="meta">Rhythmus: ' + escapeHtml(t.rhythmus || "-") + '</div>';
+          container.appendChild(div);
+        });
+      }
+    }
+
+    el("btn-start-done").addEventListener("click", () => {
+      hide("screen-start");
+      show("screen-success");
+      el("success-text").textContent = "Danke! Guten Start in den Arbeitstag.";
+    });
+
+    /* ---------- SCREEN 3: Zweit-Scan ---------- */
+
+    function renderTaskChecklist(tasks) {
+      const container = el("task-checklist");
+      container.innerHTML = "";
+      if (!tasks || tasks.length === 0) return;
+
+      const heading = document.createElement("label");
+      heading.textContent = "Welche Aufgaben wurden konkret erledigt?";
+      container.appendChild(heading);
+
+      tasks.forEach((t, idx) => {
+        const div = document.createElement("div");
+        div.className = "task";
+        div.innerHTML =
+          '<div class="desc">' + escapeHtml(t.text) + '</div>' +
+          '<label><input type="checkbox" class="task-check" data-idx="' + idx + '"> erledigt</label>';
+        container.appendChild(div);
+      });
+    }
+
+    el("bilder-group").addEventListener("change", (e) => {
+      if (e.target.value === "ja") show("bilder-upload"); else { hide("bilder-upload"); selectedImages = []; renderThumbs(); }
+    });
+
+    el("notiz-group").addEventListener("change", (e) => {
+      if (e.target.value === "ja") show("notiz-feld"); else hide("notiz-feld");
+    });
+
+    el("bilder-input").addEventListener("change", async (e) => {
+      hide("bilder-error");
+      const alle = Array.from(e.target.files || []);
+      const files = alle.slice(0, MAX_IMAGES);
+      selectedImages = [];
+      if (!files.length) { renderThumbs(); return; }
+
+      el("bilder-count").textContent = "Bilder werden verarbeitet…";
+      const fehler = [];
+      for (const f of files) {
+        try {
+          selectedImages.push(await resizeImageToDataUrl(f, IMAGE_MAX_DIMENSION, IMAGE_JPEG_QUALITY));
+        } catch (err) {
+          fehler.push((f.name || "Bild") + ": " + ((err && err.message) ? err.message : "unbekannter Fehler"));
+        }
+      }
+      renderThumbs();
+      if (alle.length > MAX_IMAGES) {
+        el("bilder-count").textContent += " Nur die ersten " + MAX_IMAGES + " Bilder werden verwendet.";
+      }
+      if (fehler.length) {
+        showError("bilder-error", "Nicht alle Bilder konnten verarbeitet werden – " + fehler.join(" | ")
+          + ". Tipp: Auf dem iPhone unter Einstellungen > Kamera > Formate auf „Maximale Kompatibilität“"
+          + " stellen, dann werden Fotos als JPEG statt HEIC gespeichert.");
+      }
+    });
+
+    function renderThumbs() {
+      const box = el("bilder-thumbs");
+      box.innerHTML = "";
+      selectedImages.forEach(src => {
+        const img = document.createElement("img");
+        img.src = src;
+        box.appendChild(img);
+      });
+      el("bilder-count").textContent = selectedImages.length + " Bild(er) ausgewählt.";
+    }
+
+    /* Verkleinert eine Bilddatei zu einer JPEG-DataURL.
+       Der frueher hier verwendete Weg (FileReader -> Base64-DataURL -> Image)
+       scheitert auf iOS Safari bei grossen Fotos und bei HEIC lautlos: das
+       Promise wird nie erfuellt oder abgelehnt, selectedImages bleibt leer und
+       es erscheint keine Fehlermeldung. Deshalb jetzt zwei robustere Wege
+       plus Zeitlimit plus Pruefung des Ergebnisses. */
+    async function resizeImageToDataUrl(file, maxDim, quality) {
+      const bild = await ladeBild(file);
+      try {
+        if (!bild.width || !bild.height) throw new Error("Bild konnte nicht gelesen werden");
+        let width = bild.width, height = bild.height;
+        if (width > maxDim || height > maxDim) {
+          if (width > height) { height = Math.round(height * maxDim / width); width = maxDim; }
+          else { width = Math.round(width * maxDim / height); height = maxDim; }
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, width, height);
+        ctx.drawImage(bild.drawable, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL("image/jpeg", quality);
+        // iOS gibt bei Speicherproblemen "data:," oder eine fast leere Grafik
+        // zurueck, ohne einen Fehler zu werfen. Deshalb Ergebnis pruefen.
+        if (dataUrl.indexOf("data:image/jpeg") !== 0 || dataUrl.length < 2000) {
+          throw new Error("Foto zu groß für dieses Gerät");
+        }
+        return dataUrl;
+      } finally {
+        bild.cleanup();
+      }
+    }
+
+    /* Liefert { drawable, width, height, cleanup }.
+       Weg 1: createImageBitmap nutzt den Decoder des Betriebssystems und kann
+              damit auch HEIC. Kein Base64-Zwischenschritt.
+       Weg 2: Object-URL im img-Element, falls Weg 1 fehlt oder scheitert. */
+    async function ladeBild(file) {
+      if (typeof createImageBitmap === "function") {
+        try {
+          let bmp;
+          try {
+            bmp = await mitZeitlimit(createImageBitmap(file, { imageOrientation: "from-image" }), 20000);
+          } catch (e1) {
+            bmp = await mitZeitlimit(createImageBitmap(file), 20000);
+          }
+          if (bmp && bmp.width) {
+            return {
+              drawable: bmp, width: bmp.width, height: bmp.height,
+              cleanup: () => { if (bmp.close) bmp.close(); }
+            };
+          }
+        } catch (e) { /* weiter mit Weg 2 */ }
+      }
+      const url = URL.createObjectURL(file);
+      try {
+        const img = await mitZeitlimit(new Promise((resolve, reject) => {
+          const i = new Image();
+          i.onload = () => resolve(i);
+          i.onerror = () => reject(new Error("Format wird nicht unterstützt"));
+          i.src = url;
+        }), 20000);
+        return {
+          drawable: img,
+          width: img.naturalWidth || img.width,
+          height: img.naturalHeight || img.height,
+          cleanup: () => URL.revokeObjectURL(url)
+        };
+      } catch (e) {
+        URL.revokeObjectURL(url);
+        throw e;
+      }
+    }
+
+    /* Verhindert, dass ein haengender Bild-Decoder das Formular blockiert. */
+    function mitZeitlimit(promise, ms) {
+      return new Promise((resolve, reject) => {
+        const t = setTimeout(() => reject(new Error("Verarbeitung hat zu lange gedauert")), ms);
+        Promise.resolve(promise).then(
+          v => { clearTimeout(t); resolve(v); },
+          e => { clearTimeout(t); reject(e); }
+        );
+      });
+    }
+
+    el("btn-end-submit").addEventListener("click", async () => {
+      hide("end-error");
+      const erledigt = document.querySelector('input[name=erledigt]:checked');
+      const bilderJaNein = document.querySelector('input[name=bilderJaNein]:checked');
+      const notizJaNein = document.querySelector('input[name=notizJaNein]:checked');
+
+      if (!erledigt) return showError("end-error", "Bitte a) beantworten: Wurden die Arbeiten erledigt?");
+      if (!bilderJaNein) return showError("end-error", "Bitte angeben, ob Bilder hochgeladen werden sollen.");
+      if (notizJaNein && notizJaNein.value === "ja" && !el("notiz-text").value.trim()) {
+        return showError("end-error", "Bitte Notiztext eingeben oder auf 'Nein' wechseln.");
+      }
+      if (bilderJaNein.value === "ja" && selectedImages.length === 0) {
+        return showError("end-error", "Bitte mindestens ein Bild auswählen oder auf 'Nein' wechseln.");
+      }
+
+      const aufgabenErledigt = currentTasks.map((t, idx) => ({
+        text: t.text,
+        erledigt: !!document.querySelector('.task-check[data-idx="' + idx + '"]:checked')
+      }));
+
+      const payload = {
+        objektNfcName,
+        mitarbeiter: el("mitarbeiter").value,
+        pin: el("pin").value.trim(),
+        erledigtStatus: erledigt.value,          // "ja" | "nein" | "teilweise"
+        aufgabenErledigt,
+        notiz: (notizJaNein.value === "ja") ? el("notiz-text").value.trim() : "",
+        bilder: (bilderJaNein.value === "ja") ? selectedImages : []
+      };
+
+      setLoading("btn-end-submit", true, "Absenden");
+      try {
+        const res = await postJSON(WEBHOOK_BASE_URL + "/scan-finish", payload);
+        if (res.mode === "error") {
+          showError("end-error", res.message || "Absenden fehlgeschlagen.");
+          return;
+        }
+        hide("screen-end");
+        show("screen-success");
+        const info = "Danke! Feierabend erfasst um " + (res.uhrzeit || "") + ". "
+          + (res.mailGesendet === false
+              ? "Es wurde keine Mail an die Verwaltung gesendet."
+              : "Die Verwaltung wurde informiert.");
+        el("success-text").textContent = res.warnung ? (info + " " + res.warnung) : info;
+      } catch (e) {
+        showError("end-error", "Verbindung fehlgeschlagen. Bitte erneut versuchen. (" + e.message + ")");
+      } finally {
+        setLoading("btn-end-submit", false, "Absenden");
+      }
+    });
+
+    /* ---------- Hilfsfunktionen ---------- */
+
+    async function postJSON(url, body) {
+      const resp = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+      if (!resp.ok) {
+        throw new Error("HTTP " + resp.status);
+      }
+      return resp.json();
+    }
+
+    function showError(id, text) {
+      el(id).textContent = text;
+      show(id);
+    }
+
+    function setLoading(btnId, loading, label) {
+      const btn = el(btnId);
+      btn.disabled = loading;
+      btn.innerHTML = loading ? '<span class="spinner"></span>Bitte warten&hellip;' : label;
+    }
+
+    function escapeHtml(s) {
+      return String(s || "").replace(/[&<>"']/g, c => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[c]));
+    }
+
+    init();
+  </script>
 </body>
+
 </html>
